@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصتي - استضافة مواقع HTML الدائمة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: #090d16; color: #fff; font-family: 'Tajawal', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .box { background: #0e1525; border: 1px solid #2b3548; padding: 30px; border-radius: 16px; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { text-align: center; color: #38bdf8; margin-bottom: 20px; }
+        input, textarea { width: 100%; background: #1c2333; border: 1px solid #2b3548; color: #fff; padding: 12px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
+        textarea { height: 150px; font-family: monospace; direction: ltr; text-align: left; }
+        button { width: 100%; background: linear-gradient(135deg, #38bdf8, #0284c7); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        button:hover { opacity: 0.9; }
+        .result { display: none; margin-top: 20px; background: #151c2c; padding: 15px; border-radius: 8px; text-align: center; }
+        .result a { color: #10b981; font-weight: bold; word-break: break-all; direction: ltr; display: block; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <h2>أنشئ موقعك الدائم</h2>
+        <input type="text" id="siteName" placeholder="اسم رابط موقعك (اختياري مثل: mypage)">
+        <textarea id="htmlCode" placeholder="ألصق كود HTML هنا..."></textarea>
+        <button onclick="createSite()">رفع الموقع وتوليد رابط دائم</button>
+
+        <div class="result" id="resultBox">
+            <div>رابط موقعك الدائم جاهز:</div>
+            <a id="finalLink" href="#" target="_blank"></a>
+        </div>
+    </div>
+
+    <script>
+        async function createSite() {
+            const htmlCode = document.getElementById('htmlCode').value;
+            const siteName = document.getElementById('siteName').value;
+
+            if (!htmlCode) {
+                alert('الرجاء كتابة أو لصق كود HTML أولاً!');
+                return;
+            }
+
+            const response = await fetch('/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ htmlCode, siteName })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                const link = data.url;
+                document.getElementById('finalLink').href = link;
+                document.getElementById('finalLink').innerText = link;
+                document.getElementById('resultBox').style.display = 'block';
+            } else {
+                alert('حدث خطأ أثناء الإنشاء');
+            }
+        }
+    </script>
+</body>
+</html>
